@@ -249,7 +249,10 @@
                 
                 // Show result
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('storyContent').innerHTML = `<p>${data.story}</p>`;
+                // Split story into paragraphs and format properly
+                const paragraphs = data.story.split('\n\n').map(p => p.trim()).filter(p => p);
+                const formattedStory = paragraphs.map(p => `<p>${p}</p>`).join('');
+                document.getElementById('storyContent').innerHTML = formattedStory;
                 document.getElementById('story').style.display = 'block';
                 
             } catch (error) {

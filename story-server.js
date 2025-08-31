@@ -23,7 +23,7 @@ app.get('/api/generate-examples', async (req, res) => {
     console.log('💡 Generating example story ideas...');
 
     const response = await claude.messages.create({
-      model: 'claude-3-haiku-20240307',
+      model: 'claude-3-5-haiku-latest',
       max_tokens: 300,
       messages: [
         {
@@ -76,18 +76,31 @@ app.post('/api/generate-story', async (req, res) => {
     console.log('📝 Generating story for input:', input);
 
     const response = await claude.messages.create({
-      model: 'claude-3-haiku-20240307',
-      max_tokens: 500,
+      model: 'claude-3-5-haiku-latest',
+      max_tokens: 4000,
       messages: [
         {
           role: 'user',
-          content: `Create a children's story based on this input: "${input}"
+          content: `Create a detailed children's bedtime story based on this input: "${input}"
 
 Requirements:
 - Age-appropriate for children 5-8 years old
-- 2-3 sentences long
-- Engaging and fun
-- Include a positive message or lesson
+- MUST be at least 4-5 substantial paragraphs long (each paragraph should be 4-6 sentences)
+- Include detailed descriptions of characters, settings, and actions
+- Develop the story with a clear beginning, middle, and end
+- Show the characters facing a challenge and how they overcome it
+- Include dialogue between characters
+- Use rich, descriptive language to help children visualize the story
+- Include a positive message or lesson learned
+- End on a peaceful, happy note suitable for bedtime
+
+Structure the story with:
+1. Introduction of main character and setting (1 paragraph)
+2. Discovery of the special ability/problem (1-2 paragraphs) 
+3. How they use their ability to help others/solve problems (1-2 paragraphs)
+4. Happy resolution and lesson learned (1 paragraph)
+
+Make it engaging and detailed - this should be a proper bedtime story, not a summary!
 
 Return only the story, no additional text.`
         }
@@ -98,6 +111,9 @@ Return only the story, no additional text.`
     const story = content.text.trim();
 
     console.log('✅ Story generated successfully');
+    console.log('📏 Story length:', story.length, 'characters');
+    console.log('📄 Story paragraphs:', story.split('\n\n').length);
+    console.log('🔍 First 200 chars:', story.substring(0, 200) + '...');
     res.json({ story });
 
   } catch (error) {
