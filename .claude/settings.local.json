@@ -9,7 +9,9 @@
       "Bash(pkill:*)",
       "Bash(taskkill:*)",
       "Bash(npx ts-node:*)",
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(lsof:*)",
+      "Bash(tasklist:*)"
     ],
     "deny": [],
     "ask": []

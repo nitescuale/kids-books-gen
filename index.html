@@ -141,18 +141,9 @@
         <h1>📚 Story Generator 📚</h1>
         
         <div class="example">
-            <h3>💡 Example Ideas</h3>
-            <div class="example-item" onclick="setExample('A brave little mouse who wants to help her friends')">
-                • A brave little mouse who wants to help her friends
-            </div>
-            <div class="example-item" onclick="setExample('A dragon who is afraid of flying but learns to be brave')">
-                • A dragon who is afraid of flying but learns to be brave
-            </div>
-            <div class="example-item" onclick="setExample('Two friends who discover a magical garden in their backyard')">
-                • Two friends who discover a magical garden in their backyard
-            </div>
-            <div class="example-item" onclick="setExample('A robot who learns to paint beautiful pictures')">
-                • A robot who learns to paint beautiful pictures
+            <h3>💡 Example Ideas <button onclick="loadExamples()" style="font-size:12px; padding:5px 10px; margin-left:10px;">🔄 New Ideas</button></h3>
+            <div id="examples-container">
+                <div class="loading" style="display: block; padding: 10px;">Loading fresh ideas...</div>
             </div>
         </div>
         
@@ -185,6 +176,47 @@
         function setExample(text) {
             document.getElementById('storyInput').value = text;
         }
+        
+        async function loadExamples() {
+            const container = document.getElementById('examples-container');
+            container.innerHTML = '<div class="loading" style="display: block; padding: 10px;">Generating fresh ideas...</div>';
+            
+            try {
+                const response = await fetch('/api/generate-examples');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Examples response:', data);
+                
+                if (!data.examples || !Array.isArray(data.examples)) {
+                    throw new Error('Invalid response format');
+                }
+                
+                container.innerHTML = data.examples.map(example => 
+                    `<div class="example-item" onclick="setExample('${example.replace(/'/g, "\\'")}')">
+                        • ${example}
+                    </div>`
+                ).join('');
+                
+            } catch (error) {
+                console.error('Error loading examples:', error);
+                container.innerHTML = `
+                    <div style="padding: 10px; color: #d32f2f; background: #ffebee; border-radius: 5px;">
+                        <strong>❌ Failed to load new ideas</strong><br>
+                        Error: ${error.message}<br>
+                        <small>Check console for details. <button onclick="loadExamples()" style="margin-top:5px;">Try Again</button></small>
+                    </div>
+                `;
+            }
+        }
+        
+        // Load examples when page loads
+        window.onload = function() {
+            loadExamples();
+        };
         
         async function generateStory() {
             const input = document.getElementById('storyInput').value.trim();
