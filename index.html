@@ -225,6 +225,8 @@
         .main-content {
             display: grid;
             gap: 2.5rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .section {
@@ -238,12 +240,12 @@
         }
 
         .section-inner {
-            background: linear-gradient(135deg, rgba(255, 253, 247, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+            background: linear-gradient(135deg, var(--section-bg-start, rgba(255, 253, 247, 0.95)) 0%, var(--section-bg-end, rgba(255, 255, 255, 0.9)) 100%);
             backdrop-filter: blur(20px);
-            border-radius: calc(var(--radius-lg) - 4px);
+            border-radius: calc(var(--radius-lg) - 2px);
             overflow: hidden;
             position: relative;
-            margin: 1px;
+            margin: -1px;
         }
 
         .section-content {
@@ -259,7 +261,7 @@
             justify-content: space-between;
             padding: 1.5rem 2rem;
             background: linear-gradient(135deg, var(--section-header-start), var(--section-header-end));
-            border-radius: calc(var(--radius-lg) - 4px) calc(var(--radius-lg) - 4px) 0 0;
+            border-radius: calc(var(--radius-lg) - 2px) calc(var(--radius-lg) - 2px) 0 0;
             margin: 0;
         }
 
@@ -285,26 +287,72 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem;
+        }
+
+        .settings .section-icon {
+            background: none;
+            backdrop-filter: none;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .section-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .refresh-btn span {
+            display: inline-flex;
+            align-items: center;
+            vertical-align: middle;
+        }
+
+        .refresh-btn span img {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.5rem;
         }
 
         .characters {
             --section-header-start: var(--coral-400);
             --section-header-end: var(--rose-400);
+            --section-bg-start: rgba(255, 253, 247, 0.95);
+            --section-bg-end: rgba(255, 255, 255, 0.9);
+        }
+
+        .characters.has-selection {
+            --section-bg-start: rgba(252, 234, 234, 0.95);
+            --section-bg-end: rgba(253, 242, 242, 0.9);
         }
 
         .settings {
             --section-header-start: var(--ocean-400);
             --section-header-end: var(--lavender-400);
+            --section-bg-start: rgba(255, 253, 247, 0.95);
+            --section-bg-end: rgba(255, 255, 255, 0.9);
+        }
+
+        .settings.has-selection {
+            --section-bg-start: rgba(224, 242, 254, 0.95);
+            --section-bg-end: rgba(238, 247, 255, 0.9);
         }
 
         .lessons {
             --section-header-start: var(--mint-400);
             --section-header-end: var(--sunshine-400);
+            --section-bg-start: rgba(255, 253, 247, 0.95);
+            --section-bg-end: rgba(255, 255, 255, 0.9);
+        }
+
+        .lessons.has-selection {
+            --section-bg-start: rgba(220, 252, 231, 0.95);
+            --section-bg-end: rgba(236, 253, 243, 0.9);
         }
 
         .refresh-btn {
@@ -656,10 +704,6 @@
         }
 
         @media (min-width: 768px) {
-            .main-content {
-                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            }
-            
             .summary-section,
             .generate-section,
             .loading-section,
@@ -797,7 +841,10 @@
             </section>
 
             <section class="story-section" id="story">
-                <h3 class="story-title">📚 Your Bedtime Story</h3>
+                <h3 class="story-title">
+                    <img src="assets/icons/logo.png" alt="Story" style="width: 1.5rem; height: 1.5rem; margin-right: 0.5rem; vertical-align: middle;">
+                    Your Bedtime Story
+                </h3>
                 <div class="story-content" id="story-content"></div>
             </section>
         </main>
@@ -809,6 +856,39 @@
             setting: null,
             lesson: null
         };
+
+        const characterIcons = [
+            'knight.png', 'dragon.png', 'black-cat.png', 'corgi.png', 
+            'robot.png', 'princess.png', 'panda.png', 'astronaut.png'
+        ];
+
+        const settingIcons = [
+            'space.png', 'sakura.png', 'forest.png', 'snow-avalanche.png',
+            'autumn.png', 'river.png', 'camping.png', 'lighthouse.png', 'beach.png'
+        ];
+
+        function getRandomIcon(iconArray, folder) {
+            const randomIndex = Math.floor(Math.random() * iconArray.length);
+            return `assets/icons/${folder}/${iconArray[randomIndex]}`;
+        }
+
+        function setRandomIcons() {
+            // Set random character icon
+            const characterIcon = getRandomIcon(characterIcons, 'character');
+            document.querySelector('.characters .section-icon').innerHTML = `<img src="${characterIcon}" alt="Character">`;
+
+            // Set random setting icon
+            const settingIcon = getRandomIcon(settingIcons, 'setting');
+            document.querySelector('.settings .section-icon').innerHTML = `<img src="${settingIcon}" alt="Setting">`;
+
+            // Set lesson icon (fixed)
+            document.querySelector('.lessons .section-icon').innerHTML = `<img src="assets/icons/lesson/rating.png" alt="Lesson">`;
+
+            // Set refresh button icons
+            document.querySelectorAll('.refresh-btn span').forEach(span => {
+                span.innerHTML = `<img src="assets/icons/refresh.png" alt="Refresh">`;
+            });
+        }
 
         function selectComponent(type, value, element) {
             // Remove selection from siblings
@@ -824,8 +904,19 @@
             selectedComponents[type] = value;
             document.getElementById(`selected-${type}`).textContent = value;
 
+            // Update section background colors
+            updateSectionBackground(type);
+
             // Update UI
             updateUI();
+        }
+
+        function updateSectionBackground(type) {
+            const section = document.querySelector(`.${type}s`);
+            if (section) {
+                // Add a selected class to change the background
+                section.classList.add('has-selection');
+            }
         }
 
         function updateUI() {
@@ -977,6 +1068,7 @@
 
         // Load components on page load
         window.addEventListener('load', () => {
+            setRandomIcons();
             loadCharacters();
             loadSettings();
             loadLessons();
