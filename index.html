@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
             padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -27,35 +27,6 @@
             color: #4a47a3;
             font-size: 2.5em;
             margin-bottom: 30px;
-        }
-        
-        .input-section {
-            margin-bottom: 30px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #4a47a3;
-        }
-        
-        textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 100px;
-            box-sizing: border-box;
-        }
-        
-        textarea:focus {
-            outline: none;
-            border-color: #4a47a3;
-            box-shadow: 0 0 10px rgba(74, 71, 163, 0.2);
         }
         
         button {
@@ -110,53 +81,130 @@
             display: none;
         }
         
-        .example {
+        .component-section {
             background: #f0f8ff;
             border-left: 4px solid #4a47a3;
-            padding: 15px;
+            padding: 20px;
             margin: 20px 0;
             border-radius: 5px;
         }
         
-        .example h3 {
+        .component-section h3 {
             margin-top: 0;
             color: #4a47a3;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         
-        .example-item {
+        .refresh-btn {
+            font-size: 12px;
+            padding: 5px 10px;
+            width: auto;
+            margin: 0;
+            margin-left: 10px;
+        }
+        
+        .component-item {
             margin: 8px 0;
             cursor: pointer;
-            padding: 8px;
-            border-radius: 5px;
-            transition: background 0.2s;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            background: white;
         }
         
-        .example-item:hover {
+        .component-item:hover {
             background: rgba(74, 71, 163, 0.1);
+            border-color: rgba(74, 71, 163, 0.2);
+        }
+        
+        .component-item.selected {
+            background: rgba(74, 71, 163, 0.2);
+            border-color: #4a47a3;
+            font-weight: bold;
+        }
+        
+        .selected-summary {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #4caf50;
+            display: none;
+        }
+        
+        .selected-summary h3 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+        
+        .selected-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #4caf50;
+        }
+        
+        .selected-item strong {
+            color: #2e7d32;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📚 Story Generator 📚</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            Choose one option from each category to create your unique bedtime story!
+        </p>
         
-        <div class="example">
-            <h3>💡 Example Ideas <button onclick="loadExamples()" style="font-size:12px; padding:5px 10px; margin-left:10px;">🔄 New Ideas</button></h3>
-            <div id="examples-container">
-                <div class="loading" style="display: block; padding: 10px;">Loading fresh ideas...</div>
+        <div class="component-section">
+            <h3>
+                🦸 Choose a Main Character
+                <button onclick="loadCharacters()" class="refresh-btn">🔄 New Options</button>
+            </h3>
+            <div id="characters-container">
+                <div class="loading" style="display: block; padding: 10px;">Loading characters...</div>
             </div>
         </div>
         
-        <div class="input-section">
-            <label for="storyInput">What should your story be about?</label>
-            <textarea 
-                id="storyInput" 
-                placeholder="Enter your story idea here... (e.g., 'A cat who loves to dance', 'A tree that grants wishes', etc.)"
-            ></textarea>
+        <div class="component-section">
+            <h3>
+                🌍 Choose a Setting
+                <button onclick="loadSettings()" class="refresh-btn">🔄 New Options</button>
+            </h3>
+            <div id="settings-container">
+                <div class="loading" style="display: block; padding: 10px;">Loading settings...</div>
+            </div>
         </div>
         
-        <button onclick="generateStory()" id="generateBtn">
-            ✨ Generate My Story! ✨
+        <div class="component-section">
+            <h3>
+                💡 Choose a Lesson
+                <button onclick="loadLessons()" class="refresh-btn">🔄 New Options</button>
+            </h3>
+            <div id="lessons-container">
+                <div class="loading" style="display: block; padding: 10px;">Loading lessons...</div>
+            </div>
+        </div>
+        
+        <div class="selected-summary" id="summary">
+            <h3>✨ Your Story Components</h3>
+            <div class="selected-item">
+                <strong>Character:</strong> <span id="selected-character">None selected</span>
+            </div>
+            <div class="selected-item">
+                <strong>Setting:</strong> <span id="selected-setting">None selected</span>
+            </div>
+            <div class="selected-item">
+                <strong>Lesson:</strong> <span id="selected-lesson">None selected</span>
+            </div>
+        </div>
+        
+        <button onclick="generateStory()" id="generateBtn" style="display: none;">
+            ✨ Generate Your Bedtime Story! ✨
         </button>
         
         <div id="loading" class="loading">
@@ -173,56 +221,105 @@
     </div>
 
     <script>
-        function setExample(text) {
-            document.getElementById('storyInput').value = text;
+        let selectedComponents = {
+            character: null,
+            setting: null,
+            lesson: null
+        };
+        
+        function selectComponent(type, value, element) {
+            // Remove selection from siblings
+            const siblings = element.parentNode.querySelectorAll('.component-item');
+            siblings.forEach(sibling => sibling.classList.remove('selected'));
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            
+            // Update selected components
+            selectedComponents[type] = value;
+            document.getElementById(`selected-${type}`).textContent = value;
+            
+            // Check if all components are selected
+            updateUI();
         }
         
-        async function loadExamples() {
-            const container = document.getElementById('examples-container');
-            container.innerHTML = '<div class="loading" style="display: block; padding: 10px;">Generating fresh ideas...</div>';
+        function updateUI() {
+            const allSelected = selectedComponents.character && 
+                              selectedComponents.setting && 
+                              selectedComponents.lesson;
+            
+            if (allSelected) {
+                document.getElementById('summary').style.display = 'block';
+                document.getElementById('generateBtn').style.display = 'block';
+            } else {
+                document.getElementById('summary').style.display = 'none';
+                document.getElementById('generateBtn').style.display = 'none';
+            }
+        }
+        
+        async function loadCharacters() {
+            const container = document.getElementById('characters-container');
+            container.innerHTML = '<div class="loading" style="display: block; padding: 10px;">Generating new characters...</div>';
             
             try {
-                const response = await fetch('/api/generate-examples');
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
+                const response = await fetch('/api/generate-characters');
                 const data = await response.json();
-                console.log('Examples response:', data);
                 
-                if (!data.examples || !Array.isArray(data.examples)) {
-                    throw new Error('Invalid response format');
-                }
-                
-                container.innerHTML = data.examples.map(example => 
-                    `<div class="example-item" onclick="setExample('${example.replace(/'/g, "\\'")}')">
-                        • ${example}
+                container.innerHTML = data.characters.map(character => 
+                    `<div class="component-item" onclick="selectComponent('character', '${character.replace(/'/g, "\\'")}', this)">
+                        • ${character}
                     </div>`
                 ).join('');
                 
             } catch (error) {
-                console.error('Error loading examples:', error);
-                container.innerHTML = `
-                    <div style="padding: 10px; color: #d32f2f; background: #ffebee; border-radius: 5px;">
-                        <strong>❌ Failed to load new ideas</strong><br>
-                        Error: ${error.message}<br>
-                        <small>Check console for details. <button onclick="loadExamples()" style="margin-top:5px;">Try Again</button></small>
-                    </div>
-                `;
+                console.error('Error loading characters:', error);
+                container.innerHTML = '<div style="padding: 10px; color: #d32f2f;">❌ Failed to load characters</div>';
             }
         }
         
-        // Load examples when page loads
-        window.onload = function() {
-            loadExamples();
-        };
+        async function loadSettings() {
+            const container = document.getElementById('settings-container');
+            container.innerHTML = '<div class="loading" style="display: block; padding: 10px;">Generating new settings...</div>';
+            
+            try {
+                const response = await fetch('/api/generate-settings');
+                const data = await response.json();
+                
+                container.innerHTML = data.settings.map(setting => 
+                    `<div class="component-item" onclick="selectComponent('setting', '${setting.replace(/'/g, "\\'")}', this)">
+                        • ${setting}
+                    </div>`
+                ).join('');
+                
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                container.innerHTML = '<div style="padding: 10px; color: #d32f2f;">❌ Failed to load settings</div>';
+            }
+        }
+        
+        async function loadLessons() {
+            const container = document.getElementById('lessons-container');
+            container.innerHTML = '<div class="loading" style="display: block; padding: 10px;">Generating new lessons...</div>';
+            
+            try {
+                const response = await fetch('/api/generate-lessons');
+                const data = await response.json();
+                
+                container.innerHTML = data.lessons.map(lesson => 
+                    `<div class="component-item" onclick="selectComponent('lesson', '${lesson.replace(/'/g, "\\'")}', this)">
+                        • ${lesson}
+                    </div>`
+                ).join('');
+                
+            } catch (error) {
+                console.error('Error loading lessons:', error);
+                container.innerHTML = '<div style="padding: 10px; color: #d32f2f;">❌ Failed to load lessons</div>';
+            }
+        }
         
         async function generateStory() {
-            const input = document.getElementById('storyInput').value.trim();
-            
-            if (!input) {
-                alert('Please enter a story idea first!');
+            if (!selectedComponents.character || !selectedComponents.setting || !selectedComponents.lesson) {
+                alert('Please select one option from each category!');
                 return;
             }
             
@@ -238,7 +335,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ input: input })
+                    body: JSON.stringify({ components: selectedComponents })
                 });
                 
                 if (!response.ok) {
@@ -269,12 +366,12 @@
             document.getElementById('generateBtn').disabled = false;
         }
         
-        // Allow Enter key to generate story
-        document.getElementById('storyInput').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                generateStory();
-            }
-        });
+        // Load all components when page loads
+        window.onload = function() {
+            loadCharacters();
+            loadSettings();
+            loadLessons();
+        };
     </script>
 </body>
 </html>
