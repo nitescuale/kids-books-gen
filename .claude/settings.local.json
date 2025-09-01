@@ -11,7 +11,9 @@
       "Bash(npx ts-node:*)",
       "Bash(npm start)",
       "Bash(lsof:*)",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "WebSearch",
+      "WebFetch(domain:lovable.dev)"
     ],
     "deny": [],
     "ask": []
