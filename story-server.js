@@ -8,7 +8,9 @@ const port = 3002;
 
 // Middleware
 app.use(express.json());
-app.use(express.static('.'));
+
+// Serve static files from the frontend dist folder
+app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
 // Initialize Claude
 const claude = new Anthropic({
@@ -75,13 +77,15 @@ app.get('/api/generate-characters', async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: `Generate exactly 4 diverse main characters for children's bedtime stories. Each should be a short description suitable for ages 5-8.
+          content: `Generate exactly 4 diverse main characters for children's bedtime stories. Each should start with a name, followed by a simple, short description suitable for ages 5-8.
+
+Use a wide variety of names - include common, familiar names like Sam, Lucy, Alex, Emma as well as unique ones. Make the names diverse and from different cultures when appropriate.
 
 Format as a JSON array of strings. Return ONLY the JSON, no other text.
 
-Example format: ["character 1", "character 2", "character 3", "character 4"]
+Example format: ["Emma, a brave little mouse who helps friends", "Carlos, a friendly dragon who loves to paint", "Lily, a curious owl who solves mysteries", "Ben, a kind robot who grows flowers"]
 
-Make them diverse, imaginative, and different from common fairy tale characters.`
+Make them diverse, imaginative, and different from common fairy tale characters. Keep each description under 12 words total (including the name).`
         }
       ]
     });
@@ -96,10 +100,10 @@ Make them diverse, imaginative, and different from common fairy tale characters.
     console.error('❌ Error generating characters:', error);
     res.json({ 
       characters: [
-        "a curious young fox with silver fur",
-        "twin otter pups who love to explore",
-        "an elderly wise owl who wears tiny spectacles", 
-        "a gentle giant panda who loves to garden"
+        "Sophie, a curious young fox with silver fur",
+        "Jake & Emma, twin otter pups who love to explore",
+        "Mr. Oliver, an elderly wise owl who wears tiny spectacles", 
+        "Lucy, a gentle giant panda who loves to garden"
       ]
     });
   }
@@ -116,13 +120,13 @@ app.get('/api/generate-settings', async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: `Generate exactly 4 diverse settings for children's bedtime stories. Each should be a magical, cozy, or interesting place suitable for ages 5-8.
+          content: `Generate exactly 4 diverse settings for children's bedtime stories. Each should be a simple, short description (1-2 sentences maximum) of a magical, cozy, or interesting place suitable for ages 5-8.
 
 Format as a JSON array of strings. Return ONLY the JSON, no other text.
 
-Example format: ["setting 1", "setting 2", "setting 3", "setting 4"]
+Example format: ["a cozy treehouse with glowing lanterns", "an underwater kingdom with singing dolphins", "a magical garden where flowers dance", "a cloud castle floating in the sky"]
 
-Make them imaginative and perfect for bedtime stories.`
+Make them imaginative and perfect for bedtime stories. Keep each description under 10 words.`
         }
       ]
     });
@@ -252,9 +256,9 @@ Return only the story, no additional text.`
   }
 });
 
-// Serve the HTML file
+// Serve React app for the root route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'frontend/dist', 'index.html'));
 });
 
 // Error handling

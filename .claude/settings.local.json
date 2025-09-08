@@ -13,7 +13,16 @@
       "Bash(lsof:*)",
       "Bash(tasklist:*)",
       "WebSearch",
-      "WebFetch(domain:lovable.dev)"
+      "WebFetch(domain:lovable.dev)",
+      "Bash(cmd /c:*)",
+      "Bash(wmic process where:*)",
+      "Bash(npm create:*)",
+      "Bash(npm run build:*)",
+      "Bash(gh auth:*)",
+      "Bash(winget install:*)",
+      "Bash(where gh)",
+      "Bash(choco install:*)",
+      "Bash(git config:*)"
     ],
     "deny": [],
     "ask": []
