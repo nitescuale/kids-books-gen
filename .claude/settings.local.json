@@ -37,7 +37,8 @@
       "mcp__playwright__browser_wait_for",
       "mcp__playwright__browser_snapshot",
       "mcp__exa__crawling_exa",
-      "WebFetch(domain:www.florafauna.ai)"
+      "WebFetch(domain:www.florafauna.ai)",
+      "mcp__playwright__browser_close"
     ],
     "deny": [],
     "ask": []

@@ -62,7 +62,7 @@ const SelectionScreen = ({
       <div className="selection-content">
         {loading ? (
           <div className="loading-state">
-            <div className="loading-dots">
+            <div className={`loading-dots ${getColorClass()}`}>
               <div className="loading-dot"></div>
               <div className="loading-dot"></div>
               <div className="loading-dot"></div>
