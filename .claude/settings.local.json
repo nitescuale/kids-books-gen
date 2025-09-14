@@ -22,7 +22,22 @@
       "Bash(winget install:*)",
       "Bash(where gh)",
       "Bash(choco install:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(npx playwright:*)",
+      "Read(//h/Downloads/**)",
+      "Read(//h/Desktop/Ing/ING3/Tools & languages/1. Python/Pandas/**)",
+      "Bash(dir:*)",
+      "mcp__exa__web_search_exa",
+      "mcp__playwright__browser_navigate",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_snapshot",
+      "mcp__exa__crawling_exa",
+      "WebFetch(domain:www.florafauna.ai)"
     ],
     "deny": [],
     "ask": []

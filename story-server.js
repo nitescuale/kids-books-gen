@@ -161,13 +161,14 @@ app.get('/api/generate-lessons', async (req, res) => {
       messages: [
         {
           role: 'user',
-          content: `Generate exactly 4 positive lessons or messages for children's bedtime stories, suitable for ages 5-8.
+          content: `Generate exactly 4 positive lessons or messages for children's bedtime stories, suitable for ages 3-8.
 
 Format as a JSON array of strings. Return ONLY the JSON, no other text.
 
 Example format: ["lesson 1", "lesson 2", "lesson 3", "lesson 4"]
 
-Make them meaningful but age-appropriate.`
+Make them meaningful but age-appropriate. They should be positive and helpful for the children, never negative and always helpful relating to the children's
+vocabulary, behaviour and self esteem and confidence.`
         }
       ]
     });
