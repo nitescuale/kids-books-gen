@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Star, Zap, AlertCircle, Crown, MapPin, Sparkles } from 'lucide-react';
+import { useTextAnimation } from '../../hooks/useTextAnimation';
 
-const ConfirmationScreen = ({ 
-  selections, 
-  onGenerateStory, 
+const ConfirmationScreen = ({
+  selections,
+  onGenerateStory,
   onEditSelection,
-  generatingStory, 
-  story, 
-  error 
+  generatingStory,
+  story,
+  error
 }) => {
+  const storyRef = useRef(null);
+  const animatedText = useTextAnimation('Creating magic', generatingStory, 400);
   const selectionItems = [
     {
       key: 'character',
@@ -35,6 +38,19 @@ const ConfirmationScreen = ({
 
   const allSelected = selections.character && selections.setting && selections.lesson;
 
+  // Auto-scroll to story when it's generated
+  useEffect(() => {
+    if (story && storyRef.current) {
+      setTimeout(() => {
+        const elementTop = storyRef.current.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({
+          top: elementTop - 20,
+          behavior: 'smooth'
+        });
+      }, 300); // Small delay to ensure DOM is updated
+    }
+  }, [story]);
+
   return (
     <div className="confirmation-screen">
       <div className="screen-header">
@@ -50,7 +66,7 @@ const ConfirmationScreen = ({
         <div className="selections-summary">
           {selectionItems.map((item) => (
             <div key={item.key} className={`selection-item ${item.color}`}>
-              <div 
+              <div
                 className="selection-header clickable-header"
                 onClick={() => onEditSelection(item.key)}
                 role="button"
@@ -76,37 +92,41 @@ const ConfirmationScreen = ({
               </button>
             </div>
           ))}
+          {/* Fourth Block: Either Incomplete Message or Generate Button */}
+          {!allSelected ? (
+            <div className="selection-item incomplete-message">
+              <p>Complete all selections to generate your story</p>
+              <div className="missing-selections">
+                {!selections.character && <span className="missing-item character">Character</span>}
+                {!selections.setting && <span className="missing-item setting">Setting</span>}
+                {!selections.lesson && <span className="missing-item lesson">Lesson</span>}
+              </div>
+            </div>
+          ) : (
+            <div className="selection-item generate-block">
+              <button
+                className="generate-story-btn-grid"
+                onClick={onGenerateStory}
+                disabled={generatingStory}
+                aria-label={generatingStory ? 'Generating your magical story' : 'Generate your magical story'}
+              >
+                {generatingStory ? (
+                  <span>{animatedText}</span>
+                ) : (
+                  <>
+                    <Zap size={20} />
+                    <span>Create My Story</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Generate Button */}
-        {allSelected && (
-          <button 
-            className="generate-story-btn"
-            onClick={onGenerateStory}
-            disabled={generatingStory}
-            aria-label={generatingStory ? 'Generating your magical story' : 'Generate your magical story'}
-          >
-            {generatingStory ? (
-              <>
-                <div className="loading-dots">
-                  <div className="loading-dot"></div>
-                  <div className="loading-dot"></div>
-                  <div className="loading-dot"></div>
-                </div>
-                <span>Creating magic...</span>
-              </>
-            ) : (
-              <>
-                <Zap size={20} />
-                <span>Create My Story</span>
-              </>
-            )}
-          </button>
-        )}
 
         {/* Generated Story */}
         {story && (
-          <div className="story-result">
+          <div ref={storyRef} className="story-result">
             <div className="story-header">
               <Star size={20} />
               <h3>Your Magical Story</h3>
@@ -127,18 +147,6 @@ const ConfirmationScreen = ({
           <div className="error-message">
             <AlertCircle size={18} />
             <span>{error}</span>
-          </div>
-        )}
-
-        {/* Incomplete Selection Message */}
-        {!allSelected && (
-          <div className="incomplete-message">
-            <p>Complete all selections to generate your story</p>
-            <div className="missing-selections">
-              {!selections.character && <span className="missing-item character">Character</span>}
-              {!selections.setting && <span className="missing-item setting">Setting</span>}
-              {!selections.lesson && <span className="missing-item lesson">Lesson</span>}
-            </div>
           </div>
         )}
       </div>

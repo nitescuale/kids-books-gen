@@ -510,17 +510,18 @@ body::before {
 
 .selection-indicator {
   position: absolute;
-  top: var(--space-md);
+  top: 50%;
   right: var(--space-md);
+  transform: translateY(-50%);
   background: var(--text-tertiary);
   color: var(--bg-primary);
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   box-shadow: var(--glow-warm);
 }
@@ -638,8 +639,8 @@ body::before {
 /* Refresh Icon Button */
 .refresh-icon-button {
   position: absolute;
-  right: -80px;
-  top: -15px;
+  right: -235px;
+  top: 55px;
   background: transparent;
   border: none;
   color: var(--text-tertiary);
@@ -673,7 +674,7 @@ body::before {
 
 .selections-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-lg);
   margin-bottom: var(--space-xl);
   max-width: 900px;
@@ -690,6 +691,9 @@ body::before {
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
 }
 
 .selection-item::before {
@@ -727,8 +731,10 @@ body::before {
   margin: calc(-1 * var(--space-xs));
 }
 
-.clickable-header:hover {
-  background: rgba(255, 255, 255, 0.05);
+.selection-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+  transition: all 0.2s ease-in-out;
 }
 
 .clickable-header:focus-visible {
@@ -762,11 +768,6 @@ body::before {
   padding: var(--space-xs);
   margin: calc(-1 * var(--space-xs));
   width: 100%;
-}
-
-.selection-value:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--character-primary);
 }
 
 /* Generate Story Button */
@@ -865,10 +866,50 @@ body::before {
   max-width: 500px;
 }
 
-.incomplete-message {
+.selection-item.incomplete-message,
+.selection-item.generate-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   color: var(--text-secondary);
-  margin-top: var(--space-lg);
+}
+
+.selection-item.incomplete-message p {
+  margin: 0 0 var(--space-md) 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* Generate Button in Grid */
+.generate-story-btn-grid {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-xl);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.generate-story-btn-grid:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.generate-story-btn-grid:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .missing-selections {

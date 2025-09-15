@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSwipeGesture } from '../hooks/useSwipeGesture';
 
@@ -14,6 +14,7 @@ const SwipeNavigator = ({
   className = '' 
 }) => {
   const containerRef = useRef(null);
+  const [showProgressDots, setShowProgressDots] = useState(true);
 
   const { swipeHandlers, isDragging, dragOffset } = useSwipeGesture({
     onSwipeLeft: canGoNext ? onNext : undefined,
@@ -42,6 +43,32 @@ const SwipeNavigator = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [canGoNext, canGoPrev, onNext, onPrev]);
+
+  // Handle scroll-based progress dots visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const threshold = windowHeight * 0.7; // Hide dots when scrolled down 70% of viewport height
+
+      setShowProgressDots(scrollTop < threshold);
+    };
+
+    // Throttle scroll events for performance
+    let ticking = false;
+    const throttledHandleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', throttledHandleScroll);
+    return () => window.removeEventListener('scroll', throttledHandleScroll);
+  }, []);
 
   // Calculate transform for current screen and drag
   // Container is 400% wide, so each step moves 25% of the container (100% of viewport)
@@ -76,7 +103,14 @@ const SwipeNavigator = ({
       )}
 
       {/* Progress Dots */}
-      <div className="progress-dots">
+      <div
+        className={`progress-dots ${showProgressDots ? 'visible' : 'hidden'}`}
+        style={{
+          opacity: showProgressDots ? 1 : 0,
+          transition: 'opacity 0.3s ease-in-out',
+          pointerEvents: showProgressDots ? 'auto' : 'none'
+        }}
+      >
         {Array.from({ length: totalSteps }).map((_, index) => {
           const getThemeClass = () => {
             switch (index) {
